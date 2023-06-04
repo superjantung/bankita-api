@@ -45,6 +45,7 @@ func TestCreateEntry(t *testing.T) {
 func TestGetEntry(t *testing.T) {
 	createdAccount := createRandomAccount(t)
 	createdEntry := createRandomEntry(t, createdAccount)
+
 	retrievedEntry, err := testQueries.GetEntry(context.Background(), createdEntry.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, retrievedEntry)
