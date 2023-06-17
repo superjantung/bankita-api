@@ -81,7 +81,24 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 			return fmt.Errorf("failed to create 'to' entry: %w", err)
 		}
 
+		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			ID:     arg.FromAccountID,
+			Amount: -arg.Amount,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to update 'to' account: %w", err)
+		}
+
+		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+			ID:     arg.ToAccountID,
+			Amount: arg.Amount,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to update 'to' account: %w", err)
+		}
+
 		return nil
+
 	})
 
 	if err != nil {
@@ -89,5 +106,5 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 		return TransferTxResult{}, fmt.Errorf("failed to perform transfer transaction")
 	}
 
-	return result, nil
+	return result, err
 }
