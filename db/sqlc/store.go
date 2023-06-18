@@ -81,24 +81,21 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 			return fmt.Errorf("failed to create 'to' entry: %w", err)
 		}
 
-		result.FromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.FromAccountID,
-			Amount: -arg.Amount,
-		})
-		if err != nil {
-			return fmt.Errorf("failed to update 'to' account: %w", err)
-		}
-
-		result.ToAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
-			ID:     arg.ToAccountID,
-			Amount: arg.Amount,
-		})
-		if err != nil {
-			return fmt.Errorf("failed to update 'to' account: %w", err)
+		if arg.FromAccountID < arg.ToAccountID {
+			result.FromAccount, result.ToAccount, err = addMoney(ctx, q, arg.FromAccountID, -arg.Amount, arg.ToAccountID, arg.Amount)
+			if err != nil {
+				fmt.Printf("Error while adding money: %v", err)
+				return err
+			}
+		} else {
+			result.ToAccount, result.FromAccount, err = addMoney(ctx, q, arg.ToAccountID, arg.Amount, arg.FromAccountID, -arg.Amount)
+			if err != nil {
+				fmt.Printf("Error while adding money: %v", err)
+				return err
+			}
 		}
 
 		return nil
-
 	})
 
 	if err != nil {
@@ -107,4 +104,21 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 	}
 
 	return result, err
+}
+
+func addMoney(ctx context.Context, q *Queries, fromAccountID int64, amount1 int64, toAccountID int64, amount2 int64) (fromAccount Account, toAccount Account, err error) {
+	fromAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		ID:     fromAccountID,
+		Amount: amount1,
+	})
+
+	if err != nil {
+		return
+	}
+
+	toAccount, err = q.AddAccountBalance(ctx, AddAccountBalanceParams{
+		ID:     toAccountID,
+		Amount: amount2,
+	})
+	return
 }
