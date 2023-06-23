@@ -84,6 +84,3 @@ func (server *Server) listAccount(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, account)
 }
-
-//TODO: implement UPDATE
-//TODO: implement DELETE
