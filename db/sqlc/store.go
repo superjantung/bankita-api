@@ -89,13 +89,13 @@ func (store *SQLStore) TransferTx(ctx context.Context, arg TransferTxParams) (Tr
 		if arg.FromAccountID < arg.ToAccountID {
 			result.FromAccount, result.ToAccount, err = addMoney(ctx, q, arg.FromAccountID, -arg.Amount, arg.ToAccountID, arg.Amount)
 			if err != nil {
-				fmt.Printf("Error while adding money: %v", err)
+				fmt.Printf("error while adding money: %v", err)
 				return err
 			}
 		} else {
 			result.ToAccount, result.FromAccount, err = addMoney(ctx, q, arg.ToAccountID, arg.Amount, arg.FromAccountID, -arg.Amount)
 			if err != nil {
-				fmt.Printf("Error while adding money: %v", err)
+				fmt.Printf("error while adding money: %v", err)
 				return err
 			}
 		}

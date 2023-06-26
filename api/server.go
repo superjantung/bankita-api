@@ -22,6 +22,8 @@ func NewServer(store db.Store) *Server {
 
 	api := router.Group("/api")
 	{
+		api.POST("/users", server.createUser)
+
 		api.POST("/accounts", server.createAccount)
 		api.GET("/accounts/:id", server.getAccount)
 		api.GET("/accounts", server.listAccount)
