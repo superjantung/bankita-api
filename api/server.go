@@ -44,6 +44,7 @@ func (server *Server) setupRouter() {
 	// Public routes
 	router.POST("/api/users", server.createUser)
 	router.POST("/api/users/login", server.loginUser)
+	router.POST("/api/tokens/renew_access", server.renewAccessToken)
 
 	// Authenticated routes
 	authRoutes := router.Group("/api").Use(authMiddleware(server.tokenMaker))
